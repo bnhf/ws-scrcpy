@@ -1,17 +1,17 @@
-FROM alpine:3.14 AS builder
+FROM debian:latest AS builder
 
 ADD . /ws-scrcpy
-RUN apk add --no-cache nodejs npm python3 make g++
+RUN apt update && apt install -y nodejs npm python3 make g++
 WORKDIR /ws-scrcpy
 RUN npm install
 RUN npm run dist
 WORKDIR dist
 RUN npm install
 
-FROM alpine:3.14 AS runner
-LABEL maintainer="MaxDuke <maxduke@gmail.com>"
+FROM debian:latest AS runner
+LABEL maintainer="The Slayer <slayer@technologydragonslayer.com>"
 
-RUN apk add --no-cache android-tools npm
+RUN apt update && apt install -y adb npm
 COPY --from=builder /ws-scrcpy/dist /root/ws-scrcpy
 
 WORKDIR /root/ws-scrcpy
