@@ -1,0 +1,32 @@
+# docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -f Dockerfile-ah4c -t bnhf/ah4c:test . --push --no-cache
+FROM debian:latest AS builder
+ADD . /ws-scrcpy
+RUN apt update && apt install -y nodejs npm python3 make g++
+WORKDIR /ws-scrcpy
+RUN npm install
+RUN npm run dist
+WORKDIR dist
+RUN npm install
+
+FROM golang:bullseye AS builder2
+RUN apt update && apt install -y git
+RUN mkdir -p /go/src/github.com/bnhf
+WORKDIR /go/src/github.com/bnhf
+RUN git clone https://github.com/bnhf/ah4c .
+RUN go build -o /opt/ah4c
+
+FROM debian:latest
+LABEL maintainer="The Slayer <slayer@technologydragonslayer.com>"
+RUN apt update && apt install -y adb curl iputils-ping npm
+RUN mkdir -p /opt/scripts /tmp/scripts /tmp/m3u /opt/html /opt/static
+COPY --from=builder /ws-scrcpy/dist /opt/ws-scrcpy
+WORKDIR /opt
+COPY --from=builder2 /opt/ah4c* /opt
+COPY docker-start.sh .
+COPY scripts /tmp/scripts
+COPY m3u/* /tmp/m3u
+COPY html/* /opt/html
+COPY static/* /opt/static
+EXPOSE 7654
+EXPOSE 8000
+CMD ./docker-start.sh
