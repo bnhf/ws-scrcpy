@@ -1,0 +1,64 @@
+#docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -f Dockerfile-slim3 -t bnhf/ah4c:test . --push --no-cache
+
+# Build ws-scrcpy application in 1st stage
+FROM alpine:3.14 AS builder
+
+# Set working directory
+WORKDIR /ws-scrcpy
+
+# Add application files
+ADD . /ws-scrcpy
+
+# Install dependencies and build
+RUN apk upgrade --no-cache && apk add --no-cache nodejs npm python3 make g++ \
+    && npm install \
+    && npm run dist \
+    && rm -rf /var/cache/apk/* /root/.npm /root/.node-gyp
+
+# Set working directory for distribution
+WORKDIR /ws-scrcpy/dist
+
+# Install any necessary dependencies for the distribution (if needed)
+RUN npm install
+
+# Build ah4c apllication in 2nd stage
+FROM golang:alpine3.14 AS builder2
+
+# Set working directory
+RUN mkdir -p /go/src/github.com/bnhf
+WORKDIR /go/src/github.com/bnhf
+
+# Install dependencies and build
+RUN apk upgrade --no-cache && apk add --no-cache git \
+    && git clone https://github.com/bnhf/ah4c . \
+    && go build -o /opt/ah4c
+
+# Copy files from local workspace
+COPY docker-start.sh /opt/
+COPY scripts /tmp/scripts/
+COPY m3u/* /tmp/m3u/
+COPY html/* /opt/html/
+COPY static /opt/static/
+
+# Build combined ah4c with ws-scrcpy
+FROM alpine:3.14 AS runner
+LABEL maintainer="The Slayer <slayer@technologydragonslayer.com>"
+
+# Set working directory
+RUN mkdir -p /opt/scripts /tmp/scripts /tmp/m3u /opt/html /opt/static
+WORKDIR /opt
+
+# Install dependencies
+RUN apk upgrade --no-cache && apk add --no-cache android-tools curl npm bash bind-tools ffmpeg procps
+
+# Copy files from builders
+COPY --from=builder /ws-scrcpy/dist /opt/ws-scrcpy
+COPY --from=builder2 /opt /opt
+COPY --from=builder2 /tmp /tmp
+
+# Expose needed ports
+EXPOSE 7654
+EXPOSE 8000
+
+# Run start script
+CMD ./docker-start.sh
