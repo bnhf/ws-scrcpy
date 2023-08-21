@@ -1,4 +1,4 @@
-#docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -f Dockerfile-slim3 -t bnhf/ah4c:test . --push --no-cache
+#docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -f Dockerfile-ah4c-slim -t bnhf/ah4c:test . --push --no-cache
 
 # Build ws-scrcpy application in 1st stage
 FROM alpine:3.14 AS builder
