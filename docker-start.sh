@@ -77,20 +77,20 @@ checkScripts() {
   
   for script in "${scripts[@]}"
     do
-      if [ ! -f /opt/scripts/onn/youtubetv/$script ] && [ -f /tmp/scripts/onn/youtubetv/$script ]; then
+      if [ ! -f /opt/scripts/onn/youtubetv/$script ] && [ -f /tmp/scripts/onn/youtubetv/$script ] || [[ $UPDATE_SCRIPTS == "true" ]]; then
         cp /tmp/scripts/onn/youtubetv/$script ./scripts/onn/youtubetv \
         && chmod +x ./scripts/onn/youtubetv/$script \
-        && echo "No existing ./scripts/onn/youtubetv/$script found"
+        && echo "No existing ./scripts/onn/youtubetv/$script found or UPDATE_SCRIPTS set to true"
       else
         if [ -f /tmp/scripts/onn/youtubetv/$script ]; then
           echo "Existing ./scripts/onn/youtubetv/$script found, and will be preserved"
         fi
       fi
 
-      if [ ! -f /opt/$STREAMER_APP/$script ] && [ -f /tmp/$STREAMER_APP/$script ]; then
+      if [ ! -f /opt/$STREAMER_APP/$script ] && [ -f /tmp/$STREAMER_APP/$script ] || [[ $UPDATE_SCRIPTS == "true" ]]; then
         cp /tmp/$STREAMER_APP/$script ./$STREAMER_APP \
         && chmod +x ./$STREAMER_APP/$script \
-        && echo "No existing ./$STREAMER_APP/$script found"
+        && echo "No existing ./$STREAMER_APP/$script found or UPDATE_SCRIPTS set to true"
       else
         if [ -f /tmp/$STREAMER_APP/$script ]; then
           echo "Existing ./$STREAMER_APP/$script found, and will be preserved"
@@ -108,9 +108,9 @@ checkM3Us() {
 
   for m3u in "${m3us[@]}"
     do
-      if [ ! -f /opt/m3u/$m3u ]; then
+      if [ ! -f /opt/m3u/$m3u ] || [[ $UPDATE_M3US == "true" ]]; then
         cp /tmp/m3u/$m3u ./m3u \
-        && echo "No existing $m3u found"
+        && echo "No existing $m3u found or UPDATE_M3US set to true"
       else
         echo "Existing $m3u found, and will be preserved"
       fi

@@ -25,12 +25,12 @@ RUN npm install
 FROM golang:alpine3.14 AS builder2
 
 # Set working directory
-RUN mkdir -p /go/src/github.com/bnhf
-WORKDIR /go/src/github.com/bnhf
+RUN mkdir -p /go/src/github.com/sullrich
+WORKDIR /go/src/github.com/sullrich
 
 # Install dependencies and build
 RUN apk upgrade --no-cache && apk add --no-cache git \
-    && git clone https://github.com/bnhf/ah4c . \
+    && git clone https://github.com/sullrich/ah4c . \
     && go build -o /opt/ah4c
 
 # Copy files from local workspace
