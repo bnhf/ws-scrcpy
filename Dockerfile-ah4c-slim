@@ -21,7 +21,7 @@ WORKDIR /ws-scrcpy/dist
 # Install any necessary dependencies for the distribution (if needed)
 RUN npm install
 
-# Build ah4c apllication in 2nd stage
+# Build ah4c application in 2nd stage
 FROM golang:alpine3.14 AS builder2
 
 # Set working directory
@@ -49,7 +49,14 @@ RUN mkdir -p /opt/scripts /tmp/scripts /tmp/m3u /opt/html /opt/static
 WORKDIR /opt
 
 # Install dependencies
-RUN apk upgrade --no-cache && apk add --no-cache android-tools curl npm bash bind-tools ffmpeg procps
+RUN apk upgrade --no-cache \
+    && apk add --no-cache android-tools curl npm bash bind-tools ffmpeg procps nano tzdata
+    #python3 \
+    #gcc g++ python3-dev musl-dev libffi-dev
+    #&& ln -sf python3 /usr/bin/python \
+    #&& python3 -m ensurepip \
+    #&& pip3 install --no-cache --upgrade --no-warn-script-location pip setuptools \
+    #&& pip3 install --no-warn-script-location pyatv
 
 # Copy files from builders
 COPY --from=builder /ws-scrcpy/dist /opt/ws-scrcpy
