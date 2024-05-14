@@ -155,7 +155,7 @@ main() {
   fixEncoderDNS $ENCODER1_URL $ENCODER2_URL $ENCODER3_URL $ENCODER4_URL
   adbConnections $TUNER1_IP $TUNER2_IP $TUNER3_IP $TUNER4_IP
   checkScripts prebmitune.sh bmitune.sh stopbmitune.sh isconnected.sh keep_alive.sh reboot.sh createm3u.sh
-  checkM3Us directv.m3u dtvosprey.m3u dtvstream.m3u foo-fighters.m3u fubo.m3u hulu.m3u livetv.m3u nbc.m3u npo.m3u silicondust.m3u sling.m3u spectrum.m3u xfinity.m3u youtubetv_shield.m3u youtubetv.m3u
+  checkM3Us directv.m3u dtvdeeplinks.m3u dtvosprey.m3u dtvstream.m3u foo-fighters.m3u fubo.m3u hulu.m3u livetv.m3u nbc.m3u npo.m3u silicondust.m3u sling.m3u spectrum.m3u xfinity.m3u youtubetv_shield.m3u youtubetv.m3u
   createM3Us $TUNER1_IP $TUNER2_IP $TUNER3_IP $TUNER4_IP
   npm start --prefix ws-scrcpy &
   ./ah4c
