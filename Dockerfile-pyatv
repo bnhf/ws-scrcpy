@@ -20,7 +20,7 @@ COPY html/* /opt/html/
 COPY static /opt/static/
 
 # Build combined ah4c with ws-scrcpy
-FROM ghcr.io/postlund/pyatv:master AS runner
+FROM ghcr.io/postlund/pyatv:0.14.5 AS runner
 LABEL maintainer="The Slayer <slayer@technologydragonslayer.com>"
 
 # Set working directory
@@ -29,7 +29,7 @@ WORKDIR /opt
 
 # Install dependencies
 RUN apk upgrade --no-cache \
-    && apk add --no-cache android-tools curl npm bash bind-tools ffmpeg procps nano tzdata
+    && apk add --no-cache android-tools curl npm bash bind-tools ffmpeg procps nano tzdata tesseract-ocr
 
 # Copy files from builders
 COPY --from=builder2 /opt /opt
@@ -40,4 +40,4 @@ EXPOSE 7654
 EXPOSE 8000
 
 # Run start script
-CMD ./docker-start-pyatv.sh
+CMD ["./docker-start-pyatv.sh"]

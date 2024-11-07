@@ -34,7 +34,7 @@ RUN apk upgrade --no-cache && apk add --no-cache git \
     && go build -o /opt/ah4c
 
 # Copy files from local workspace
-COPY docker-start.sh /opt/
+COPY docker-start.sh adbpackages.sh /opt/
 COPY scripts /tmp/scripts/
 COPY m3u/* /tmp/m3u/
 COPY html/* /opt/html/
@@ -68,4 +68,4 @@ EXPOSE 7654
 EXPOSE 8000
 
 # Run start script
-CMD ./docker-start.sh
+CMD ["./docker-start.sh"]
